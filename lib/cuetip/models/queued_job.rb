@@ -1,3 +1,4 @@
+require 'active_record'
 module Cuetip
   module Models
     class QueuedJob < ActiveRecord::Base

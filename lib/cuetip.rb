@@ -5,6 +5,9 @@ require 'cuetip/config'
 require 'cuetip/models/job'
 require 'cuetip/models/queued_job'
 require 'cuetip/job'
+require 'cuetip/monitor'
+require 'cuetip/worker'
+require 'cuetip/supervisor'
 
 module Cuetip
 
