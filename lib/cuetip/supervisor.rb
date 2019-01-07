@@ -9,7 +9,7 @@ module Cuetip
 
     def run
       loop do
-        @workers.values.each do |monitor|
+        @workers.values.dup.each do |monitor|
           monitor.wait_nonblock
         end
         puts @workers.inspect
@@ -18,7 +18,7 @@ module Cuetip
     end
 
     def start_worker
-      monitor = Monitor.new
+      monitor = Monitor.new(self)
       worker = Worker.new(monitor)
       worker.start
       @workers[monitor.pid] = monitor
