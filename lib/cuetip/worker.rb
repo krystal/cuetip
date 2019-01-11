@@ -17,10 +17,9 @@ module Cuetip
           command, *params = request.strip.split(':')
           case command
           when 'run'
-            #if queued_job = QueuedJob.find_by_id(params[0].to_i)
-            puts params.inspect
+            if queued_job = QueuedJob.find_by_id(params[0].to_i)
               sleep 1
-            #end
+            end
           when 'exit'
             # Master has requested exit, so exit
             break
