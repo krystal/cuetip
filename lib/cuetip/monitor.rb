@@ -8,13 +8,14 @@ module Cuetip
 
     def initialize(supervisor)
       @supervisor = supervisor
+      @status = :starting
     end
 
     def wait_nonblock
       begin
         @up_pipe.read_nonblock(100)
         @status = :available
-        STDERR.puts "worker ready"
+        Cuetip.logger.debug "Worker #{self.object_id} ready."
       rescue IO::EAGAINWaitReadable
         # Nothing to do
       rescue EOFError
@@ -29,6 +30,10 @@ module Cuetip
     def run_job
       @down_pipe.puts "run:1"
       @status = :busy
+    end
+
+    def available?
+      @status == :available
     end
 
   end

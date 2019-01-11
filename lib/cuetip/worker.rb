@@ -11,10 +11,10 @@ module Cuetip
     # This method runs in a child process
     def run
       loop do
+        @up_pipe.puts "READY"
         @down_pipe.gets
         sleep 1
-        @up_pipe.puts "DONE"
-        Process.exit(0)
+        #Process.exit(0)
       end
     end
 
@@ -24,7 +24,6 @@ module Cuetip
     end
 
     def start
-      ActiveRecord::Base.clear_all_connections!
       setup_pipes
       @monitor.pid = fork do
         @monitor.down_pipe.close
@@ -33,14 +32,6 @@ module Cuetip
       end
       @down_pipe.close
       @up_pipe.close
-    end
-
-    def gets
-      @down_pipe.gets
-    end
-
-    def puts(data)
-      @up_pipe.puts(data)
     end
 
   end

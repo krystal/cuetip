@@ -1,9 +1,11 @@
 module Cuetip
   class Config
 
-    # The number of worker threads to run
-    def worker_threads
-      @worker_threads || 1
+    DEFAULT_BEFORE_FORK = Proc.new { ActiveRecord::Base.clear_all_connections! }
+
+    # The number of worker processes to run
+    def workers
+      @workers || 1
     end
     attr_writer :worker_threads
 
@@ -21,7 +23,7 @@ module Cuetip
 
     # What port should be used for multicast?
     def multicast_port
-      @multicast_port ||= 34900
+      @multicast_port || 34900
     end
     attr_writer :multicast_port
 
@@ -43,6 +45,24 @@ module Cuetip
         @exception_handler = block
       else
         @exception_handler
+      end
+    end
+
+    # Set/return block to run before forking
+    def before_fork(&block)
+      if block_given?
+        @before_fork = block
+      else
+        @before_fork || DEFAULT_BEFORE_FORK
+      end
+    end
+
+    # Set/return block to run after forking
+    def after_fork(&block)
+      if block_given?
+        @after_fork = block
+      else
+        @after_fork
       end
     end
 

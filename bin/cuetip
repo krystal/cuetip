@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+require "cuetip"
+require 'optparse'
+
+options = {}
+OptionParser.new do |opts|
+  opts.version = Cuetip::VERSION
+  opts.banner = "Usage: cuetip [options]"
+
+  opts.on("-c", "--config PATH", "The path to your cuetip config file") do |config|
+    options[:config] = config
+  end
+
+  opts.on("-h", "--help", "Prints this help") do
+    puts opts
+    exit
+  end
+
+end.parse!
+
+if options[:config]
+  if File.file?(options[:config])
+    file = File.expand_path(options[:config])
+    require file
+  else
+    puts "Cuetip config file not found at #{options[:config]}"
+    exit 1
+  end
+end
+
+supervisor = Cuetip::Supervisor.new
+supervisor.run

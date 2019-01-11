@@ -9,10 +9,8 @@ module Cuetip
 
     def run
       loop do
-        @workers.values.dup.each do |monitor|
-          monitor.wait_nonblock
-        end
-        puts @workers.inspect
+        check_workers
+        run_job
         sleep 0.5
       end
     end
@@ -25,9 +23,35 @@ module Cuetip
     end
 
     def run_job
-      worker = @workers.values.first
-      worker.run_job
-      true
+      Cuetip.logger.debug "Attempting to execute job."
+      if w = available_worker
+        Cuetip.logger.debug "Executing job on worker #{w.object_id}."
+        w.run_job
+        true
+      else
+        Cuetip.logger.debug "No workers available"
+        false
+      end
+    end
+
+    def check_workers
+      ## Check for replies from all child wokers
+      @workers.values.each do |monitor|
+        monitor.wait_nonblock
+      end
+
+      ## Ensure we have the appropriate number of workers
+      if @workers.size < Cuetip.config.workers
+        Cuetip.config.before_fork&.call
+        while workers.size < Cuetip.config.workers
+          start_worker
+        end
+        Cuetip.config.after_fork&.call
+      end
+    end
+
+    def available_worker
+      @workers.values.shuffle.find{ | monitor | monitor.available? }
     end
 
   end

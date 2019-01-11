@@ -8,11 +8,16 @@ require 'cuetip/job'
 require 'cuetip/monitor'
 require 'cuetip/worker'
 require 'cuetip/supervisor'
+require 'cuetip/version'
 
 module Cuetip
 
   def self.config
     @config ||= Config.new
+  end
+
+  def self.logger
+    self.config.logger
   end
 
   def self.configure(&block)
