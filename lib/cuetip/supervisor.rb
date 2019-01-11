@@ -24,9 +24,9 @@ module Cuetip
 
     def run_job
       Cuetip.logger.debug "Attempting to execute job."
-      if w = available_worker
-        Cuetip.logger.debug "Executing job on worker #{w.object_id}."
-        w.run_job
+      if monitor = available_worker
+        Cuetip.logger.debug "Executing job on worker #{monitor.object_id}."
+        monitor.run_job
         true
       else
         Cuetip.logger.debug "No workers available"

@@ -12,9 +12,23 @@ module Cuetip
     def run
       loop do
         @up_pipe.puts "READY"
-        @down_pipe.gets
-        sleep 1
-        #Process.exit(0)
+        request = @down_pipe.gets
+        if request
+          command, *params = request.strip.split(':')
+          case command
+          when 'run'
+            #if queued_job = QueuedJob.find_by_id(params[0].to_i)
+            puts params.inspect
+              sleep 1
+            #end
+          when 'exit'
+            # Master has requested exit, so exit
+            break
+          end
+        else
+          # Master seems to have gone away, so exit
+          break
+        end
       end
     end
 
