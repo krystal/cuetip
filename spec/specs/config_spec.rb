@@ -7,7 +7,9 @@ describe Cuetip::Config do
   end
 
   it "should disconnect ActiveRecord before fork" do
-    expect(ActiveRecord::Base).to receive(:clear_all_connections!)
+    allow(ActiveRecord::Base).to receive(:clear_all_connections!)
     Cuetip::Config.new.before_fork&.call
+    expect(ActiveRecord::Base).to have_received(:clear_all_connections!)
   end
+
 end

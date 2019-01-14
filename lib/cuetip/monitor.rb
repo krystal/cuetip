@@ -27,8 +27,8 @@ module Cuetip
       true
     end
 
-    def run_job
-      @down_pipe.puts "run:1"
+    def run_job(queued_job)
+      @down_pipe.puts "run:#{queued_job.id}"
       @status = :busy
     end
 

@@ -3,6 +3,7 @@ module Cuetip
 
     attr_accessor :down_pipe
     attr_accessor :up_pipe
+    attr_reader :monitor
 
     def initialize(monitor)
       @monitor = monitor
@@ -10,24 +11,39 @@ module Cuetip
 
     # This method runs in a child process
     def run
-      loop do
-        @up_pipe.puts "READY"
-        request = @down_pipe.gets
-        if request
-          command, *params = request.strip.split(':')
-          case command
-          when 'run'
-            if queued_job = QueuedJob.find_by_id(params[0].to_i)
-              sleep 1
-            end
-          when 'exit'
-            # Master has requested exit, so exit
-            break
+      while process_once; end
+    end
+
+    def run_once
+      @up_pipe.puts "READY"
+      request = @down_pipe.gets
+      if request
+        command, *params = request.strip.split(':')
+        case command
+        when 'run'
+          if queued_job = Cuetip::Models::QueuedJob.find_by_id(params[0].to_i)
+            process_queued_job(queued_job)
+          else
+            Cuetip.logger.debug "Queued job #{params[0].to_i} not found."
           end
-        else
-          # Master seems to have gone away, so exit
-          break
+        when 'exit'
+          # Master has requested exit, so exit
+          return false
         end
+      else
+        # Master seems to have gone away, so exit
+        return false
+      end
+      true
+    end
+
+    def process_queued_job(queued_job)
+      if queued_job.lock!
+        Cuetip.logger.debug "Queued job #{queued_job.id} locked."
+        Cuetip.logger.debug "Executing job #{queued_job.job_id}."
+        queued_job.job.execute
+      else
+        Cuetip.logger.debug "Queued job #{queued_job.id} locked elsewhere. Skipping."
       end
     end
 
