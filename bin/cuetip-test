@@ -1,0 +1,21 @@
+$:.unshift(File.expand_path('../../lib', __FILE__))
+
+require 'active_record'
+
+FileUtils::rm_f("/tmp/test.sqlite3")
+ActiveRecord::Base.establish_connection adapter: "sqlite3", database: "/tmp/test.sqlite3"
+ActiveRecord::Migrator.migrate(File.expand_path('../../db/migrate', __FILE__))
+
+require 'cuetip'
+
+# Log everything
+Cuetip.logger.level = Logger::DEBUG
+
+class TestJob < Cuetip::Job
+  def perform
+    puts "TestTask Running"
+  end
+end
+
+TestJob.queue
+Cuetip::Supervisor.new.run

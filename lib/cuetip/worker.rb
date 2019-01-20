@@ -11,7 +11,7 @@ module Cuetip
 
     # This method runs in a child process
     def run
-      while process_once; end
+      while run_once; end
     end
 
     def run_once

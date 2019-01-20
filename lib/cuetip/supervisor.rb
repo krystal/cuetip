@@ -10,8 +10,11 @@ module Cuetip
     def run
       loop do
         check_workers
-        run_job
-        sleep 0.5
+        Cuetip::Models::QueuedJob.pending.each do |qj|
+          run_job(qj)
+        end
+
+        sleep 1
       end
     end
 
@@ -22,11 +25,11 @@ module Cuetip
       @workers[monitor.pid] = monitor
     end
 
-    def run_job
+    def run_job(queued_job)
       Cuetip.logger.debug "Attempting to execute job."
       if monitor = available_worker
         Cuetip.logger.debug "Executing job on worker #{monitor.object_id}."
-        monitor.run_job
+        monitor.run_job(queued_job)
         true
       else
         Cuetip.logger.debug "No workers available"

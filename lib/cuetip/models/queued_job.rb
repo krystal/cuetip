@@ -8,6 +8,7 @@ module Cuetip
       PROCESS_IDENTIFIER = Socket.gethostname + ":#{Process.pid}"
       self.table_name = 'cuetip_job_queue'
 
+      scope :pending, -> { where(:locked_at => nil).where('run_after < ?', Time.now) }
       belongs_to :job, :class_name => "Cuetip::Models::Job"
 
       # Unlock the job and allow it to be re-run elsewhere.
