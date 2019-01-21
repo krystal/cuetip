@@ -29,7 +29,15 @@ class CreateCuetipQueuedJobsTable < ActiveRecord::Migration[5.0]
       t.integer :retry_interval
       t.integer :delay_execution
 
+      # Add a parent
+      t.string :associated_object_type
+      t.bigint :associated_object_id
+
       t.timestamps :null => true
+
+      t.index :associated_object_id
+      t.index :class_name, :length => 10
+      t.index :status, :length => 10
 
     end
   end

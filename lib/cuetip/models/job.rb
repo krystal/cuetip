@@ -8,6 +8,7 @@ module Cuetip
       STATUSES = ['Pending', 'Running', 'Complete', 'Aborted', 'Expired']
 
       has_one :queued_job, :class_name => 'Cuetip::Models::QueuedJob'
+      belongs_to :associated_object, :polymorphic => true, :optional => true
 
       serialize :params, Hash
 
