@@ -68,9 +68,9 @@ module Cuetip
 
     # Initialize this job instance by providing a queued job instance
     #
-    # @param queued_job [Cuetip::QueuedJob]
-    def initialize(queued_job)
-      @queued_job = queued_job
+    # @param queued_job [Cuetip::Models::Job]
+    def initialize(job)
+      @job = job
     end
 
     # Perform a job
@@ -85,14 +85,21 @@ module Cuetip
     #
     # @return [Hashie::Mash]
     def params
-      @queued_job.params
+      @job.params
     end
 
     # Return the queued job object
     #
-    # @return [Cuetip::QueuedJob]
-    def queued_job
-      @queued_job
+    # @return [Cuetip::Models::Job]
+    def job
+      @job
+    end
+
+    # Return a quick access for the job
+    #
+    # @return [Logger]
+    def logger
+      Cuetip.logger
     end
 
   end
