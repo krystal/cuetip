@@ -1,8 +1,6 @@
 # Cuetip
 
-Cuetip is a fast & reliable job queueing engine for applications that already use ActiveRecord. In its most simple form, workers will poll the database for jobs and execute them in a managed thread pool.
-
-To improve speed of executing jobs and reduce database load, Cuetip can also be configured to broadcast a message to workers to let them know when new jobs are added to the queue which need to be executed. This allows them to execute them immediately rather than waiting for another poll. No additional infrastructure is required for this and it can be configured using a multicast network. If you're on a shared network you may not wish to use this for security reasons (although no private information is broadcast).
+Cuetip is a fast & reliable job queueing engine for applications that already use ActiveRecord. In its most simple form, workers will poll the database for jobs and execute them.
 
 ## Installation
 
@@ -24,28 +22,15 @@ There is some configuration which is required. In a Rails application, you can p
 ```ruby
 Cuetip.configure do |config|
 
-  # Set the number of threads to run in each worker process
-  config.worker_threads = 6
-
   # The interval between polling
-  config.polling_interval = 1.minute
-
-  # Enable multicast broadcasting
-  config.multicast = true
-
-  # Set the port for multicast broadcasting
-  config.multicast_port = 37261
-
-  # Choose a scope to identify this application over others that might be running
-  # on the same local network as your host
-  config.multicast_scope = 'abc123'
+  config.polling_interval = 10.seconds
 
   # Set a logger where all Cuetip related log messages will be sent to. By default, they will go to STDOUT.
   config.logger = Logger.new(Rails.root.join('log', 'cuetip.log'))
 
   # Configure a block to execute whenever an exception is encountered in a job. You might
   # use this for reporting to an exception reporting service. It is optional.
-  config.exception_handler do |exception, job|
+  config.on(:exception) do |exception, job|
     Raven.capture_exception(exception, :extra => {:job => job.id})
   end
 
@@ -167,6 +152,15 @@ ExampleJob.queue do |job|
   job.ttl = 10.seconds
 end
 ```
+
+### Callbacks
+
+Callbacks can be defined either globally or on a per-job type basis. The following events will be emitted.
+
+* `before_execute` - receiving `job` - before a job execution begins
+* `executed` - receiving `job` - after a job has executed
+* `exception` - receiving `job, exception` - when an exception occurs within a job
+* `expired` - receiving `job` - when a job has been expired because it reached a TTL
 
 ## Workers
 

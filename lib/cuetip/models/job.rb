@@ -50,17 +50,18 @@ module Cuetip
       #
       # @return [Boolean] whether the job executed successfully or not
       def execute(&block)
+        # Initialize a new instance of the job we wish to execute
+        job_klass = self.class_name.constantize.new(self)
 
         # If the job has expired, we should not be executing this so we'll just
         # remove it from the queue and mark it as expired.
         if self.expired?
           self.status = 'Expired'
           self.remove_from_queue
+          job_klass.class.emit(:expired, job_klass)
           return false
         end
 
-        # Initialize a new instance of the job we wish to execute
-        job_klass = self.class_name.constantize.new(self)
         # If we have a block, call this so we can manipulate our actual job class
         # before execution if needed (mostly for testing)
         block.call(job_klass) if block_given?
@@ -69,13 +70,15 @@ module Cuetip
         begin
           # Perform the job within a timeout
           Timeout.timeout(self.maximum_execution_time || 1.year) do
+            job_klass.class.emit(:before_execute, job_klass)
             job_klass.perform
           end
           # Mark the job as complete and remove it from the queue
           self.status = 'Complete'
           self.remove_from_queue
+          job_klass.class.emit(:executed, job_klass)
           true
-        rescue => e
+        rescue Exception, Timeout::TimeoutError => e
           # If there's an error, mark the job as failed and copy exception
           # data into the job
           self.status = 'Failed'
@@ -92,6 +95,8 @@ module Cuetip
             # We're done with this job. We can't do any more retries.
             self.remove_from_queue
           end
+
+          job_klass.class.emit(:exception, job_klass, e)
 
           false
         end
