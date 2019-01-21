@@ -28,5 +28,5 @@ if options[:config]
   end
 end
 
-supervisor = Cuetip::Supervisor.new
-supervisor.run
+worker = Cuetip::Worker.new
+worker.run

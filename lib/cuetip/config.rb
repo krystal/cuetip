@@ -1,14 +1,6 @@
 module Cuetip
   class Config
 
-    DEFAULT_BEFORE_FORK = Proc.new { ActiveRecord::Base.clear_all_connections! }
-
-    # The number of worker processes to run
-    def workers
-      @workers || 1
-    end
-    attr_writer :worker_threads
-
     # The length of time between polling
     def polling_interval
       @polling_interval || 10
@@ -45,24 +37,6 @@ module Cuetip
         @exception_handler = block
       else
         @exception_handler
-      end
-    end
-
-    # Set/return block to run before forking
-    def before_fork(&block)
-      if block_given?
-        @before_fork = block
-      else
-        @before_fork || DEFAULT_BEFORE_FORK
-      end
-    end
-
-    # Set/return block to run after forking
-    def after_fork(&block)
-      if block_given?
-        @after_fork = block
-      else
-        @after_fork
       end
     end
 
