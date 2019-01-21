@@ -1,5 +1,6 @@
 require 'socket'
 require 'active_record'
+require 'cuetip/models/job'
 
 module Cuetip
   module Models

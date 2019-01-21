@@ -1,3 +1,5 @@
+require 'cuetip/models/job'
+
 module Cuetip
   class Job
 
@@ -75,14 +77,6 @@ module Cuetip
     #
     # @return [void]
     def perform
-    end
-
-    # Emit an event as part of this job's execution
-    #
-    # @return [void]
-    def self.emit(event_name, *args)
-      Cuetip.config.emit(event_name, *args)
-      super
     end
 
     private

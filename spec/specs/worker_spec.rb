@@ -1,10 +1,13 @@
 require 'spec_helper'
+require 'cuetip/worker'
+require 'cuetip/worker_group'
 
 describe Cuetip::Worker do
 
   context "running" do
-  
-    subject(:worker)     { Cuetip::Worker.new }
+
+    subject(:worker_group) { Cuetip::WorkerGroup.new(1) }
+    subject(:worker)     { Cuetip::Worker.new(worker_group, 0) }
     subject(:job)        { Cuetip::Models::Job.create! }
     subject(:queued_job) { Cuetip::Models::QueuedJob.create!(:job => job) }
 

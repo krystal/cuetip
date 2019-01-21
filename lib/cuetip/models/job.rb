@@ -1,4 +1,7 @@
 require 'active_record'
+require 'cuetip/models/queued_job'
+require 'cuetip/serialized_hashie'
+
 module Cuetip
   module Models
     class Job < ActiveRecord::Base
@@ -10,7 +13,7 @@ module Cuetip
       has_one :queued_job, :class_name => 'Cuetip::Models::QueuedJob'
       belongs_to :associated_object, :polymorphic => true, :optional => true
 
-      serialize :params, Hash
+      serialize :params, Cuetip::SerializedHashie
 
       before_validation(:on => :create) do
         self.status = 'Pending'
@@ -45,18 +48,28 @@ module Cuetip
       def remove_from_queue
         self.queued_job&.destroy
         self.queued_job = nil
+        log "Removed from queue"
+      end
+
+      # Log some text about this job
+      #
+      # @param text [String]
+      def log(text)
+        Cuetip.logger.info "[#{self.id}] #{text}"
       end
 
       # Execute the job
       #
       # @return [Boolean] whether the job executed successfully or not
       def execute(&block)
+        log "Beginning execution of job #{self.id} with #{self.class_name}"
         # Initialize a new instance of the job we wish to execute
         job_klass = self.class_name.constantize.new(self)
 
         # If the job has expired, we should not be executing this so we'll just
         # remove it from the queue and mark it as expired.
         if self.expired?
+          log "Job has expired"
           self.status = 'Expired'
           self.remove_from_queue
           job_klass.class.emit(:expired, job_klass)
@@ -76,10 +89,13 @@ module Cuetip
           end
           # Mark the job as complete and remove it from the queue
           self.status = 'Complete'
+          log "Job completed successfully"
           self.remove_from_queue
           job_klass.class.emit(:executed, job_klass)
           true
         rescue Exception, Timeout::TimeoutError => e
+          log "Job failed with #{e.class} (#{e.message})"
+
           # If there's an error, mark the job as failed and copy exception
           # data into the job
           self.status = 'Failed'
@@ -90,7 +106,8 @@ module Cuetip
           # Handle requeing the job if needed.
           if self.requeue_on_failure?
             # Requeue this job for execution again after the retry interval.
-            self.queued_job.requeue(:run_after => Time.now + self.retry_interval.to_i)
+            new_job = self.queued_job.requeue(:run_after => Time.now + self.retry_interval.to_i)
+            log "Requeing job to run after #{new_job.run_after.to_s(:long)}"
             self.status = 'Pending'
           else
             # We're done with this job. We can't do any more retries.
@@ -104,6 +121,7 @@ module Cuetip
       ensure
         self.finished_at = Time.now
         self.save!
+        log "Finished processing"
       end
 
     end
