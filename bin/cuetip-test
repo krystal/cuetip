@@ -2,6 +2,7 @@ $:.unshift(File.expand_path('../../lib', __FILE__))
 
 require 'active_record'
 require 'mysql2'
+require 'cuetip/worker_group'
 
 ActiveRecord::Base.establish_connection adapter: "mysql2", database: "cuetip", username: "root"
 ActiveRecord::Migrator.migrate(File.expand_path('../../db/migrate', __FILE__))
@@ -14,8 +15,10 @@ Cuetip.logger.level = Logger::DEBUG
 class TestJob < Cuetip::Job
   def perform
     puts "TestTask Running"
+    sleep 1
   end
 end
 
 10.times { TestJob.queue }
-Cuetip::Worker.new.run
+worker = Cuetip::WorkerGroup.new(2)
+worker.start

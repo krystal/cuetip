@@ -37,5 +37,10 @@ module Cuetip
       @threads.values.each(&:join)
     end
 
+    def set_process_name
+      thread_names = @workers.values.map(&:status)
+      Process.setproctitle("Cuetip: #{thread_names.inspect}")
+    end
+
   end
 end

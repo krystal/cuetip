@@ -1,3 +1,4 @@
+require 'cuetip'
 require 'cuetip/config'
 require 'cuetip/job'
 require 'cuetip/version'

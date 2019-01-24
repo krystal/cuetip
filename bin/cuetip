@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+require 'cuetip'
+require 'cuetip/config'
 require 'cuetip/version'
 require 'cuetip/worker_group'
 require 'optparse'
