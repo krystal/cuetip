@@ -7,7 +7,7 @@ module Cuetip
 
     include ActiveSupport::Callbacks
 
-    define_callbacks :execute
+    define_callbacks :execute, :poll
 
     def initialize(group, id)
       @group = group
@@ -34,16 +34,18 @@ module Cuetip
 
     def run_once
       set_status("polling")
-      if queued_job = Cuetip::Models::QueuedJob.find_and_lock
-        set_status("executing #{queued_job.job.id}")
-        run_callbacks :execute do
-          queued_job.job.execute
+      run_callbacks :poll do
+        if queued_job = Cuetip::Models::QueuedJob.find_and_lock
+          set_status("executing #{queued_job.job.id}")
+            run_callbacks :execute do
+              queued_job.job.execute
+            end
+          set_status("idle")
+          true
+        else
+          set_status("idle")
+          false
         end
-        set_status("idle")
-        true
-      else
-        set_status("idle")
-        false
       end
     end
 
