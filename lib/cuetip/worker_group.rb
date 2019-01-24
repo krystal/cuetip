@@ -3,6 +3,10 @@ require 'cuetip/worker'
 module Cuetip
   class WorkerGroup
 
+    include ActiveSupport::Callbacks
+
+    define_callbacks :run_worker
+
     def initialize(quantity)
       @quantity = quantity
       @workers = {}
@@ -24,7 +28,7 @@ module Cuetip
         @workers[i] = Worker.new(self, i)
         Cuetip.logger.info "-> Starting worker #{i}"
         @threads[i] = Thread.new(@workers[i]) do |worker|
-          ActiveRecord::Base.connection_pool.with_connection do
+          run_callbacks :run_worker do
             worker.run
           end
         end

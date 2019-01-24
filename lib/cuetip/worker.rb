@@ -3,6 +3,10 @@ require 'cuetip/models/queued_job'
 module Cuetip
   class Worker
 
+    include ActiveSupport::Callbacks
+
+    define_callbacks :execute
+
     def initialize(group, id)
       @group = group
       @id = id
@@ -33,7 +37,9 @@ module Cuetip
 
     def run_once
       if queued_job = Cuetip::Models::QueuedJob.find_and_lock
-        queued_job.job.execute
+        run_callbacks :execute do
+          queued_job.job.execute
+        end
         true
       else
         false

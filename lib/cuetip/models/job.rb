@@ -79,8 +79,10 @@ module Cuetip
         # If we have a block, call this so we can manipulate our actual job class
         # before execution if needed (mostly for testing)
         block.call(job_klass) if block_given?
+
         # Mark the job as runnign
         self.update!(:status => 'Running', :started_at => Time.now, :executions => self.executions + 1)
+
         begin
           # Perform the job within a timeout
           Timeout.timeout(self.maximum_execution_time || 1.year) do
@@ -121,6 +123,7 @@ module Cuetip
       ensure
         self.finished_at = Time.now
         self.save!
+        job_klass.class.emit(:finished, job_klass)
         log "Finished processing"
       end
 
