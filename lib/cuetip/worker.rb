@@ -35,7 +35,9 @@ module Cuetip
     def run_once
       set_status("polling")
       run_callbacks :poll do
-        if queued_job = Cuetip::Models::QueuedJob.find_and_lock
+        queued_job = silence { Cuetip::Models::QueuedJob.find_and_lock }
+
+        if queued_job
           set_status("executing #{queued_job.job.id}")
             run_callbacks :execute do
               queued_job.job.execute
@@ -63,6 +65,14 @@ module Cuetip
 
     def interrupt_sleep
       @_sleep_interrupt.close if @_sleep_interrupt
+    end
+
+    def silence(&block)
+      if ActiveRecord::Base.logger
+        ActiveRecord::Base.logger.silence(&block)
+      else
+        block.call
+      end
     end
 
   end
