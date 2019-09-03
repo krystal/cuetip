@@ -7,6 +7,10 @@ module Cuetip
 
     define_callbacks :run_worker
 
+    attr_reader :quantity
+    attr_reader :workers
+    attr_reader :threads
+
     def initialize(quantity)
       @quantity = quantity
       @workers = {}
