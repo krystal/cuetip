@@ -59,12 +59,14 @@ module Cuetip
     end
 
     def interruptible_sleep(seconds)
-      @_sleep_check, @_sleep_interrupt = IO.pipe
-      IO.select([@_sleep_check], nil, nil, seconds)
+      sleep_check, @sleep_interrupt = IO.pipe
+      IO.select([sleep_check], nil, nil, seconds)
+      sleep_check.close
+      @sleep_interrupt.close
     end
 
     def interrupt_sleep
-      @_sleep_interrupt.close if @_sleep_interrupt
+      @sleep_interrupt.close if @sleep_interrupt
     end
 
     def silence(&block)
