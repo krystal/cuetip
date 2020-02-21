@@ -26,16 +26,19 @@ module Cuetip
 
     # Define a job event callback
     def on(event, &block)
+      callbacks[event.to_sym] ||= []
       callbacks[event.to_sym] << block
     end
 
     # Return all callbacks
     def callbacks
-      @callbacks ||= Hash.new { [] }
+      @callbacks ||= Hash.new
     end
 
     # Emit some callbacks
     def emit(event, *args)
+      return unless callbacks[event.to_sym]
+
       callbacks[event.to_sym].each do |callback|
         callback.call(*args)
       end

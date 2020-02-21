@@ -168,5 +168,27 @@ describe Cuetip::Models::Job do
         end
       end
     end
+
+    context 'callbacks' do
+      it 'should run callbacks when finished' do
+        callback_run = false
+        job = Cuetip::Models::Job.create!(class_name: 'Cuetip::Job', retry_count: 3, retry_interval: 10)
+        Cuetip.config.on(:exception) { |job| callback_run = true }
+        job.execute do |instance|
+          allow(instance).to receive(:perform) do
+            raise StandardError, 'An example test suite error'
+          end
+        end
+        expect(callback_run).to be true
+      end
+
+      it 'should run callbacks when finished' do
+        callback_run = false
+        job = Cuetip::Models::Job.create!(class_name: 'Cuetip::Job', retry_count: 3, retry_interval: 10)
+        Cuetip.config.on(:finished) { |job| callback_run = true }
+        job.execute
+        expect(callback_run).to be true
+      end
+    end
   end
 end
