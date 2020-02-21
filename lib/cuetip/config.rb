@@ -23,5 +23,22 @@ module Cuetip
       @logger ||= Logger.new(STDOUT)
     end
     attr_writer :logger
+
+    # Define a job event callback
+    def on(event, &block)
+      callbacks[event.to_sym] << block
+    end
+
+    # Return all callbacks
+    def callbacks
+      @callbacks ||= Hash.new { [] }
+    end
+
+    # Emit some callbacks
+    def emit(event, *args)
+      callbacks[event.to_sym].each do |callback|
+        callback.call(*args)
+      end
+    end
   end
 end

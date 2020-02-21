@@ -73,6 +73,7 @@ module Cuetip
           log 'Job has expired'
           self.status = 'Expired'
           remove_from_queue
+          Cuetip.config.emit(:expired, self, job_klass)
           return false
         end
 
@@ -92,6 +93,9 @@ module Cuetip
           self.status = 'Complete'
           log 'Job completed successfully'
           remove_from_queue
+
+          Cuetip.config.emit(:completed, self, job_klass)
+
           true
         rescue Exception, Timeout::TimeoutError => e
           log "Job failed with #{e.class} (#{e.message})"
@@ -114,11 +118,14 @@ module Cuetip
             remove_from_queue
           end
 
+          Cuetip.config.emit(:exception, e, self, job_klass)
+
           false
         end
       ensure
         self.finished_at = Time.now
         save!
+        Cuetip.config.emit(:finished, self, job_klass)
         log 'Finished processing'
       end
     end
