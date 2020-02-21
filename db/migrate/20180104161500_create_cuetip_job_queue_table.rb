@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateCuetipJobQueueTable < ActiveRecord::Migration[5.0]
   def change
     create_table :cuetip_job_queue do |t|

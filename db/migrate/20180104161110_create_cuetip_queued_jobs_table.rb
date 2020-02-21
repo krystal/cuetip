@@ -1,13 +1,14 @@
+# frozen_string_literal: true
+
 require 'active_support/core_ext/numeric/bytes'
 
 class CreateCuetipQueuedJobsTable < ActiveRecord::Migration[5.0]
   def change
     create_table :cuetip_jobs do |t|
-
       t.string :class_name
-      t.text :params, :limit => 1.megabyte
+      t.text :params, limit: 1.megabyte
       t.datetime :run_after
-      t.integer :executions, :default => 0
+      t.integer :executions, default: 0
 
       # Status
       t.string :status
@@ -33,12 +34,11 @@ class CreateCuetipQueuedJobsTable < ActiveRecord::Migration[5.0]
       t.string :associated_object_type
       t.bigint :associated_object_id
 
-      t.timestamps :null => true
+      t.timestamps null: true
 
       t.index :associated_object_id
-      t.index :class_name, :length => 10
-      t.index :status, :length => 10
-
+      t.index :class_name, length: 10
+      t.index :status, length: 10
     end
   end
 end

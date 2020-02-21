@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 require 'cuetip/worker'
 
 module Cuetip
   class WorkerGroup
-
     include ActiveSupport::Callbacks
 
     define_callbacks :run_worker
@@ -22,7 +23,7 @@ module Cuetip
 
       exit_trap = proc do
         @workers.each { |_, worker| worker.request_exit! }
-        puts "Exiting..."
+        puts 'Exiting...'
       end
 
       trap('INT', &exit_trap)
@@ -45,6 +46,5 @@ module Cuetip
       thread_names = @workers.values.map(&:status)
       Process.setproctitle("Cuetip: #{thread_names.inspect}")
     end
-
   end
 end

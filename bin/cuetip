@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
 require 'cuetip'
 require 'cuetip/config'
 require 'cuetip/version'
@@ -11,21 +13,20 @@ $stderr.sync = true
 options = {}
 OptionParser.new do |opts|
   opts.version = Cuetip::VERSION
-  opts.banner = "Usage: cuetip [options]"
+  opts.banner = 'Usage: cuetip [options]'
 
-  opts.on("-c", "--config PATH", "The path to your cuetip config file") do |config|
+  opts.on('-c', '--config PATH', 'The path to your cuetip config file') do |config|
     options[:config] = config
   end
 
-  opts.on("-h", "--help", "Prints this help") do
+  opts.on('-h', '--help', 'Prints this help') do
     puts opts
     exit
   end
 
-  opts.on("-q NUMBER", "The number of workers to run") do |i|
+  opts.on('-q NUMBER', 'The number of workers to run') do |i|
     options[:quantity] = i.to_i
   end
-
 end.parse!
 
 if options[:config]

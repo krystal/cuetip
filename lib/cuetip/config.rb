@@ -1,10 +1,11 @@
+# frozen_string_literal: true
+
 require 'active_support'
 require 'active_support/core_ext/numeric/bytes'
 require 'active_support/core_ext/numeric/time'
 
 module Cuetip
   class Config
-
     # The length of time between polling
     def polling_interval
       @polling_interval || 5
@@ -22,6 +23,5 @@ module Cuetip
       @logger ||= Logger.new(STDOUT)
     end
     attr_writer :logger
-
   end
 end

@@ -1,24 +1,22 @@
+# frozen_string_literal: true
+
 require 'cuetip'
 require 'cuetip/config'
 require 'cuetip/job'
 require 'cuetip/version'
 
 module Cuetip
-
   def self.config
     @config ||= Config.new
   end
 
   def self.logger
-    self.config.logger
+    config.logger
   end
 
   def self.configure(&block)
-    block.call(self.config)
+    block.call(config)
   end
-
 end
 
-if defined?(Rails)
-  require 'cuetip/engine'
-end
+require 'cuetip/engine' if defined?(Rails)

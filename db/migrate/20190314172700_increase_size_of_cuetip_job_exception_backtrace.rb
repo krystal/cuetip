@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class IncreaseSizeOfCuetipJobExceptionBacktrace < ActiveRecord::Migration[5.0]
   def change
     change_column :cuetip_jobs, :exception_backtrace, :text, limit: 2.megabytes

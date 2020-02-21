@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 require 'cuetip/models/queued_job'
 
 module Cuetip
   class Worker
-    
     attr_reader :status
 
     include ActiveSupport::Callbacks
@@ -20,32 +21,30 @@ module Cuetip
     end
 
     def run
-      set_status("idle")
+      set_status('idle')
       loop do
         unless run_once
           interruptible_sleep(Cuetip.config.polling_interval + rand)
         end
 
-        if @exit_requested
-          break
-        end
+        break if @exit_requested
       end
     end
 
     def run_once
-      set_status("polling")
+      set_status('polling')
       run_callbacks :poll do
         queued_job = silence { Cuetip::Models::QueuedJob.find_and_lock }
 
         if queued_job
           set_status("executing #{queued_job.job.id}")
-            run_callbacks :execute do
-              queued_job.job.execute
-            end
-          set_status("idle")
+          run_callbacks :execute do
+            queued_job.job.execute
+          end
+          set_status('idle')
           true
         else
-          set_status("idle")
+          set_status('idle')
           false
         end
       end
@@ -55,7 +54,7 @@ module Cuetip
 
     def set_status(status)
       @status = status
-      @group.set_process_name if @group
+      @group&.set_process_name
     end
 
     def interruptible_sleep(seconds)
@@ -66,7 +65,7 @@ module Cuetip
     end
 
     def interrupt_sleep
-      @sleep_interrupt.close if @sleep_interrupt
+      @sleep_interrupt&.close
     end
 
     def silence(&block)
@@ -76,6 +75,5 @@ module Cuetip
         block.call
       end
     end
-
   end
 end

@@ -1,10 +1,10 @@
+# frozen_string_literal: true
+
 require 'cuetip/models/job'
 
 module Cuetip
   class Job
-
     class << self
-
       # The queue that this job should be executed on
       def queue_name
         @queue_name || 'default'
@@ -47,14 +47,14 @@ module Cuetip
       # @return [Cuetip::Models::Job]
       def queue(params = {}, &block)
         # Create our new job
-        job = Models::Job.new(:class_name => self.name, :params => params)
+        job = Models::Job.new(class_name: name, params: params)
         # Copy over any class leve lconfig
-        job.queue_name = self.queue_name
-        job.maximum_execution_time = self.maximum_execution_time
-        job.ttl = self.ttl
-        job.retry_count = self.retry_count
-        job.retry_interval = self.retry_interval
-        job.delay_execution = self.delay_execution
+        job.queue_name = queue_name
+        job.maximum_execution_time = maximum_execution_time
+        job.ttl = ttl
+        job.retry_count = retry_count
+        job.retry_interval = retry_interval
+        job.delay_execution = delay_execution
         # Call the block
         block.call(job) if block_given?
         # Create the job
@@ -74,8 +74,7 @@ module Cuetip
     # Perform a job
     #
     # @return [void]
-    def perform
-    end
+    def perform; end
 
     private
 
@@ -89,9 +88,7 @@ module Cuetip
     # Return the queued job object
     #
     # @return [Cuetip::Models::Job]
-    def job
-      @job
-    end
+    attr_reader :job
 
     # Return a quick access for the job
     #
@@ -99,6 +96,5 @@ module Cuetip
     def logger
       Cuetip.logger
     end
-
   end
 end
