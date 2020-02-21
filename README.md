@@ -153,15 +153,6 @@ ExampleJob.queue do |job|
 end
 ```
 
-### Callbacks
-
-Callbacks can be defined either globally or on a per-job type basis. The following events will be emitted.
-
-* `before_execute` - receiving `job` - before a job execution begins
-* `executed` - receiving `job` - after a job has executed
-* `exception` - receiving `job, exception` - when an exception occurs within a job
-* `expired` - receiving `job` - when a job has been expired because it reached a TTL
-
 ## Workers
 
 To run a Cuetip worker you can use the `cuptip` executable that is provided. You should pass it a configuration file that will be required when it starts. This will need to require your application's environment.

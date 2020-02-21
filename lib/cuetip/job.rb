@@ -5,8 +5,6 @@ module Cuetip
 
     class << self
 
-      include Cuetip::Events
-
       # The queue that this job should be executed on
       def queue_name
         @queue_name || 'default'
