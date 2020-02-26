@@ -27,6 +27,13 @@ OptionParser.new do |opts|
   opts.on('-q NUMBER', 'The number of workers to run') do |i|
     options[:quantity] = i.to_i
   end
+
+  opts.on('-Q', '--queues QUEUE1,QUEUE2', 'Queues that you wish to work on') do |queues|
+    options[:queues] = []
+    queues.split(/,/).uniq.each do |queue|
+      options[:queues] << queue
+    end
+  end
 end.parse!
 
 if options[:config]
@@ -39,5 +46,5 @@ if options[:config]
   end
 end
 
-worker = Cuetip::WorkerGroup.new(options[:quantity].to_i == 0 ? Cuetip.config.worker_threads : options[:quantity].to_i)
+worker = Cuetip::WorkerGroup.new(options[:quantity].to_i == 0 ? Cuetip.config.worker_threads : options[:quantity].to_i, options[:queues])
 worker.start

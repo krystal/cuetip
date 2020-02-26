@@ -11,6 +11,8 @@ module Cuetip
       self.table_name = 'cuetip_job_queue'
 
       scope :pending, -> { where(locked_at: nil).where('run_after is null or run_after < ?', Time.now) }
+      scope :from_queues, -> (queues) { where(queue_name: queues) }
+
       belongs_to :job, class_name: 'Cuetip::Models::Job'
 
       # Unlock the job and allow it to be re-run elsewhere.
@@ -28,10 +30,14 @@ module Cuetip
       end
 
       # Simultaneously find an outstanding job and lock it
-      def self.find_and_lock(queued_job_id = nil)
+      def self.find_and_lock(queued_job_id = nil, queue_name = nil)
         lock_id = generate_lock_id
         scope = if queued_job_id
-                  where(id: queued_job_id)
+                  if queue_name
+                    where(id: queued_job_id, queue_name: queue_name)
+                  else
+                    where(id: queued_job_id)
+                  end
                 else
                   self
                 end
