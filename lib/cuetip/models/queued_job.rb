@@ -30,14 +30,10 @@ module Cuetip
       end
 
       # Simultaneously find an outstanding job and lock it
-      def self.find_and_lock(queued_job_id = nil, queue_name = nil)
+      def self.find_and_lock(queued_job_id = nil)
         lock_id = generate_lock_id
         scope = if queued_job_id
-                  if queue_name
-                    where(id: queued_job_id, queue_name: queue_name)
-                  else
-                    where(id: queued_job_id)
-                  end
+                  where(id: queued_job_id)
                 else
                   self
                 end
