@@ -37,10 +37,11 @@ module Cuetip
       run_callbacks :poll do
         queued_job = silence do
           if @queues.any?
-            Cuetip::Models::QueuedJob.from_queues(@queues).find_and_lock
+            scope = Cuetip::Models::QueuedJob.from_queues(@queues)
           else
-            Cuetip::Models::QueuedJob.find_and_lock
+            scope = Cuetip::Models::QueuedJob
           end
+          scope.find_and_lock
         end
 
         if queued_job
