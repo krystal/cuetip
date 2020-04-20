@@ -67,8 +67,6 @@ module Cuetip
         # Initialize a new instance of the job we wish to execute
         job_klass = class_name.constantize.new(self)
 
-        Cuetip.config.emit(:before_perform, self, job_klass)
-
         # If the job has expired, we should not be executing this so we'll just
         # remove it from the queue and mark it as expired.
         if expired?
@@ -78,6 +76,8 @@ module Cuetip
           Cuetip.config.emit(:expired, self, job_klass)
           return false
         end
+
+        Cuetip.config.emit(:before_perform, self, job_klass)
 
         # If we have a block, call this so we can manipulate our actual job class
         # before execution if needed (mostly for testing)
