@@ -21,6 +21,9 @@ module Cuetip
 
     def start
       Cuetip.logger.info "Starting #{@quantity} Cuetip workers"
+      if @queues.any?
+        @queues.each { |q| Cuetip.logger.info "-> Joined queue: #{q.to_s}" }
+      end
 
       exit_trap = proc do
         @workers.each { |_, worker| worker.request_exit! }
