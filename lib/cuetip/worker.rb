@@ -10,9 +10,10 @@ module Cuetip
 
     define_callbacks :execute, :poll
 
-    def initialize(group, id)
+    def initialize(group, id, queues)
       @group = group
       @id = id
+      @queues = queues
     end
 
     def request_exit!
@@ -34,7 +35,14 @@ module Cuetip
     def run_once
       set_status('polling')
       run_callbacks :poll do
-        queued_job = silence { Cuetip::Models::QueuedJob.find_and_lock }
+        queued_job = silence do
+          if @queues.any?
+            scope = Cuetip::Models::QueuedJob.from_queues(@queues)
+          else
+            scope = Cuetip::Models::QueuedJob
+          end
+          scope.find_and_lock
+        end
 
         if queued_job
           set_status("executing #{queued_job.job.id}")

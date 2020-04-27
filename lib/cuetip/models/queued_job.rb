@@ -11,6 +11,8 @@ module Cuetip
       self.table_name = 'cuetip_job_queue'
 
       scope :pending, -> { where(locked_at: nil).where('run_after is null or run_after < ?', Time.now) }
+      scope :from_queues, -> (queues) { where(queue_name: queues) }
+
       belongs_to :job, class_name: 'Cuetip::Models::Job'
 
       # Unlock the job and allow it to be re-run elsewhere.

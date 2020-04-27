@@ -17,7 +17,7 @@ $ bundle exec rake db:migrate
 
 ## Configuration
 
-There is some configuration which is required. In a Rails application, you can place this in `config/initializers/cuetip.rb`.
+There is some configuration which is required. In a Rails application, in: `config/initializers/cuetip.rb`.
 
 ```ruby
 Cuetip.configure do |config|
@@ -35,6 +35,12 @@ Cuetip.configure do |config|
   end
 
 end
+```
+
+and in: `config/cuetip.rb`
+
+```
+require_relative 'environment'
 ```
 
 ## Jobs

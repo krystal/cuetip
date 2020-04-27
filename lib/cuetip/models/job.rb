@@ -77,6 +77,8 @@ module Cuetip
           return false
         end
 
+        Cuetip.config.emit(:before_perform, self, job_klass)
+
         # If we have a block, call this so we can manipulate our actual job class
         # before execution if needed (mostly for testing)
         block.call(job_klass) if block_given?
