@@ -62,6 +62,13 @@ module Cuetip
         # Return the job
         job
       end
+
+      # Prune jobs before a specific time
+      #
+      # @param before [ActiveSupport::TimeWithZone] The point in time to prune jobs until.
+      def prune(before)
+        Models::Job.where('created_at < ?', before).destroy_all
+      end
     end
 
     # Initialize this job instance by providing a queued job instance
@@ -75,13 +82,6 @@ module Cuetip
     #
     # @return [void]
     def perform; end
-
-    # Prune jobs before a specific time
-    #
-    # @param before [ActiveSupport::TimeWithZone] The point in time to prune jobs until.
-    def self.prune(before)
-      Models::Job.where('created_at < ?', before).destroy_all
-    end
 
     private
 
