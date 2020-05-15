@@ -23,4 +23,18 @@ describe Cuetip::Job do
       expect(job.queue_name).to eq 'anotherqueue'
     end
   end
+
+  context '#prune' do
+    it 'should prune jobs created before the specified date' do
+      job = Cuetip::Job.queue
+
+      job.update(created_at: 2.months.ago)
+
+      expect(Cuetip::Models::Job.find_by(id: job.id)).to eq job
+
+      Cuetip::Job.prune(1.month.ago)
+
+      expect(Cuetip::Models::Job.find_by(id: job.id)).to eq nil
+    end
+  end
 end
