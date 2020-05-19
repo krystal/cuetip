@@ -11,7 +11,7 @@ module Cuetip
 
       STATUSES = %w[Pending Running Complete Aborted Expired].freeze
 
-      has_one :queued_job, class_name: 'Cuetip::Models::QueuedJob'
+      has_one :queued_job, class_name: 'Cuetip::Models::QueuedJob', dependent: :destroy
       belongs_to :associated_object, polymorphic: true, optional: true
 
       serialize :params, Cuetip::SerializedHashie
