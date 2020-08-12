@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require 'active_record'
+require 'serialized_hashie'
 require 'cuetip/models/queued_job'
-require 'cuetip/serialized_hashie'
 
 module Cuetip
   module Models
@@ -14,7 +14,7 @@ module Cuetip
       has_one :queued_job, class_name: 'Cuetip::Models::QueuedJob', dependent: :destroy
       belongs_to :associated_object, polymorphic: true, optional: true
 
-      serialize :params, Cuetip::SerializedHashie
+      serialize :params, SerializedHashie::Hash
 
       before_validation(on: :create) do
         self.status = 'Pending'
