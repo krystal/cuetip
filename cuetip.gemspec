@@ -15,5 +15,5 @@ Gem::Specification.new do |s|
   s.authors       = ['Adam Cooke']
   s.email         = ['me@adamcooke.io']
   s.add_runtime_dependency 'activerecord', '>= 5.0'
-  s.add_runtime_dependency 'hashie'
+  s.add_runtime_dependency 'serialized-hashie', '~> 1.1', '>= 1.1.4'
 end
