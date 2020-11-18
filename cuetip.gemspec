@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.homepage      = 'https://github.com/adamcooke/cuetip'
   s.licenses      = ['MIT']
   s.version       = Cuetip::VERSION
-  s.files         = Dir.glob('{exe,lib}/**/*')
+  s.files         = Dir.glob('{bin,lib,db}/**/*')
   s.executables   = ['cuetip']
   s.require_paths = ['lib']
   s.authors       = ['Adam Cooke']
