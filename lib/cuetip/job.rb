@@ -61,6 +61,7 @@ module Cuetip
         job.retry_count = retry_count
         job.retry_interval = retry_interval
         job.delay_execution = delay_execution
+        job.delete_after_execution = delete_after_execution
         # Call the block
         block.call(job) if block_given?
         # Create the job
