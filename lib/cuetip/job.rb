@@ -67,7 +67,7 @@ module Cuetip
       #
       # @param before [ActiveSupport::TimeWithZone] The point in time to prune jobs until.
       def prune(before)
-        Models::Job.where('created_at < ?', before).destroy_all
+        Models::Job.where('created_at < ?', before).delete_all
       end
     end
 
