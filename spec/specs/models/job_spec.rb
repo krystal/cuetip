@@ -137,6 +137,25 @@ describe Cuetip::Models::Job do
       end
     end
 
+    context 'jobs with delete after execution' do
+      it 'should delete the job' do
+        job = Cuetip::Models::Job.create!(class_name: 'Cuetip::Job', delete_after_execution: true)
+        job.execute { true }
+        expect(job.destroyed?).to be true
+        expect(Cuetip::Models::Job.find_by(id: job.id)).to be nil
+      end
+
+      it 'should not delete jobs without it' do
+        job = Cuetip::Models::Job.create!(class_name: 'Cuetip::Job', delete_after_execution: false)
+        job.execute { true }
+        expect(job.destroyed?).to be false
+
+        fetched_job = Cuetip::Models::Job.find_by(id: job.id)
+        expect(fetched_job).to be_a Cuetip::Models::Job
+        expect(fetched_job.finished_at).to be_a Time
+      end
+    end
+
     context 'jobs with exceptions with a retry' do
       it 'should marked as pending with an exception' do
         job = Cuetip::Models::Job.create!(class_name: 'Cuetip::Job', retry_count: 3, retry_interval: 10)

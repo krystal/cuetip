@@ -41,6 +41,12 @@ module Cuetip
       end
       attr_writer :delay_execution
 
+      # Should this job be deleted after execution
+      def delete_after_execution
+        @delete_after_execution || false
+      end
+      attr_writer :delete_after_execution
+
       # Queue this job
       #
       # @param params [Hash]

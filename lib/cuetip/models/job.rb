@@ -50,6 +50,12 @@ module Cuetip
         queued_job&.destroy
         self.queued_job = nil
         log 'Removed from queue'
+
+        if delete_after_execution?
+          destroy
+          log 'Removed job from database'
+        end
+
       end
 
       # Log some text about this job
@@ -125,8 +131,10 @@ module Cuetip
           false
         end
       ensure
-        self.finished_at = Time.now
-        save!
+        unless destroyed?
+          self.finished_at = Time.now
+          save!
+        end
         Cuetip.config.emit(:finished, self, job_klass)
         log 'Finished processing'
       end
