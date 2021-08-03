@@ -168,3 +168,23 @@ $ bundle exec cuetip -c config/cuetip.rb
 ```
 
 You can run as many workers as you wish however the more that you run the more polling queries will be sent to your database.
+
+## Testing
+
+In order to unit test a `Cuetip::Job`'s instance methods (such as `#perform`), it first needs to be instanciated passing in an instance of `Cuetip::Models::Job`. This is best done with a tesing double:
+
+### RSpec
+
+```ruby
+subject(:job) { JobClass.new(job_model) }
+
+let(:job_model) { instance_double('Cuetip::Models::Job') }
+
+describe '#perform' do
+  it 'does something' do
+    job.perform
+    
+    # add expectaions here
+  end
+end
+```
