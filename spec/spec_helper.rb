@@ -11,6 +11,3 @@ ActiveRecord::MigrationContext.new(
   ActiveRecord::Base.connection.schema_migration).migrate
 
 require 'cuetip'
-
-# Disable logging to STDOUT
-Cuetip.logger.level = Logger::UNKNOWN

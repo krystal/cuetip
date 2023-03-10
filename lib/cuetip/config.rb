@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'klogger'
 require 'active_support'
 require 'active_support/core_ext/numeric/bytes'
 require 'active_support/core_ext/numeric/time'
@@ -20,7 +21,7 @@ module Cuetip
 
     # Return the logger
     def logger
-      @logger ||= Logger.new(STDOUT)
+      @logger ||= Klogger.new(:cuetip)
     end
     attr_writer :logger
 

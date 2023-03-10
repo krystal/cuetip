@@ -26,7 +26,7 @@ Cuetip.configure do |config|
   config.polling_interval = 10.seconds
 
   # Set a logger where all Cuetip related log messages will be sent to. By default, they will go to STDOUT.
-  config.logger = Logger.new(Rails.root.join('log', 'cuetip.log'))
+  config.logger = Klogger.new(:cuetip, destination: Rails.root.join('log', 'cuetip.log'))
 
   # Configure a block to execute whenever an exception is encountered in a job. You might
   # use this for reporting to an exception reporting service. It is optional.
@@ -183,7 +183,7 @@ let(:job_model) { instance_double('Cuetip::Models::Job') }
 describe '#perform' do
   it 'does something' do
     job.perform
-    
+
     # add expectaions here
   end
 end
