@@ -6,6 +6,7 @@ module Cuetip
   class WorkerGroup
     include ActiveSupport::Callbacks
 
+    define_callbacks :run_worker_group
     define_callbacks :run_worker
 
     attr_reader :quantity
@@ -34,19 +35,21 @@ module Cuetip
         trap('INT', &exit_trap)
         trap('TERM', &exit_trap)
 
-        @quantity.times do |i|
-          @workers[i] = Worker.new(self, i, @queues)
-          Klogger.tagged worker_index: i do
-            Cuetip.logger.info "Starting worker"
-            @threads[i] = Thread.new(@workers[i]) do |worker|
-              run_callbacks :run_worker do
-                worker.run
+        run_callbacks :run_worker_group do
+          @quantity.times do |i|
+            @workers[i] = Worker.new(self, i, @queues)
+            Klogger.tagged worker_index: i do
+              Cuetip.logger.info "Starting worker"
+              @threads[i] = Thread.new(@workers[i]) do |worker|
+                run_callbacks :run_worker do
+                  worker.run
+                end
               end
             end
+            @threads[i].abort_on_exception = true
           end
-          @threads[i].abort_on_exception = true
+          @threads.values.each(&:join)
         end
-        @threads.values.each(&:join)
       end
     end
 
