@@ -14,7 +14,7 @@ module Cuetip
       has_one :queued_job, class_name: 'Cuetip::Models::QueuedJob', dependent: :destroy
       belongs_to :associated_object, polymorphic: true, optional: true
 
-      serialize :params, Cuetip::SerializedHashie
+      serialize :params, type: Hash, coder: Cuetip::SerializedHashie
 
       before_validation(on: :create) do
         self.status = 'Pending'
@@ -122,7 +122,7 @@ module Cuetip
             if requeue_on_failure?
               # Requeue this job for execution again after the retry interval.
               new_job = queued_job.requeue(run_after: Time.now + retry_interval.to_i)
-              Cuetip.logger.info "Requeueing job", run_after: new_job.run_after.to_s(:long)
+              Cuetip.logger.info "Requeueing job", run_after: new_job.run_after.to_fs(:long)
               self.status = 'Pending'
             else
               # We're done with this job. We can't do any more retries.

@@ -5,5 +5,5 @@ gemspec
 group :development do
   gem 'mysql2', '>= 0.3.18', '< 0.5'
   gem 'rspec'
-  gem 'sqlite3'
+  gem 'sqlite3', '~> 1.5.4'
 end

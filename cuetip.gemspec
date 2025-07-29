@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
   s.authors       = ['Adam Cooke']
   s.email         = ['me@adamcooke.io']
-  s.add_runtime_dependency 'activerecord', '>= 5.0'
+  s.add_runtime_dependency 'activerecord', '>= 7.1'
   s.add_runtime_dependency 'hashie'
   s.add_runtime_dependency 'klogger-logger', '>= 1.3', '< 2.0'
 end
