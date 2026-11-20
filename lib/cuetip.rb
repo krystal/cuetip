@@ -6,6 +6,9 @@ require 'cuetip/job'
 require 'cuetip/version'
 
 module Cuetip
+  # Loaded on first use, so Active Job is only required by apps that use it.
+  autoload :ActiveJobWrapper, 'cuetip/active_job_wrapper'
+
   def self.config
     @config ||= Config.new
   end
