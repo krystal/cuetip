@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cuetip (3.0.0)
+    cuetip (3.1.0)
       activerecord (>= 7.2)
       hashie
       klogger-logger (>= 1.3, < 2.0)
@@ -9,6 +9,9 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    activejob (8.1.4.1)
+      activesupport (= 8.1.4.1)
+      globalid (>= 0.3.6)
     activemodel (8.1.4.1)
       activesupport (= 8.1.4.1)
     activerecord (8.1.4.1)
@@ -34,6 +37,8 @@ GEM
     connection_pool (3.0.3)
     diff-lcs (1.6.2)
     drb (2.2.3)
+    globalid (1.4.0)
+      activesupport (>= 6.1)
     hashie (6.0.0)
       logger
     i18n (1.15.2)
@@ -101,12 +106,14 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  activejob (>= 7.2)
   cuetip!
   mysql2 (~> 0.5)
   rspec (~> 3.13)
   sqlite3 (>= 2.10.2)
 
 CHECKSUMS
+  activejob (8.1.4.1) sha256=82c4c9311ea1016d5f7f134a0c5f9b6527cad5a6237f5f3f60aa17984ef36229
   activemodel (8.1.4.1) sha256=063caf105372fbc98b2d789e4be23de63ac5c043f7d9330f04e2caddb7012805
   activerecord (8.1.4.1) sha256=bd65599ca0b5d210937f835d42c7aff69d271741c75aab022730be6cbce67e87
   activesupport (8.1.4.1) sha256=16ac4f341ca65c85a1fcdb8ac73f68891aae9e3c4a6f9c3a27daed8b00017ed7
@@ -114,9 +121,10 @@ CHECKSUMS
   bigdecimal (4.1.3) sha256=61ebe1e5e559bdc3cc6f2c0ee7f427321fc838f59611c294356eb04d6e21cf66
   concurrent-ruby (1.3.8) sha256=b2f1be836e968ccc78ccfce277ea79c72a88633f22306782c16ff23fb415d1e1
   connection_pool (3.0.3) sha256=e0f8ee3ee0039396753e06e8a2dde0ef028e40f7df29e97f57da7577c489cb5e
-  cuetip (3.0.0)
+  cuetip (3.1.0)
   diff-lcs (1.6.2) sha256=9ae0d2cba7d4df3075fe8cd8602a8604993efc0dfa934cff568969efb1909962
   drb (2.2.3) sha256=0b00d6fdb50995fe4a45dea13663493c841112e4068656854646f418fda13373
+  globalid (1.4.0) sha256=037f12fbf1d9d7a014d501c2d5c77356fd4ddd96d7a7991d6700bba96706f427
   hashie (6.0.0) sha256=0896391e9fc7a259bfe02abbb1a026b3e142e2f464e10255261d50a0eda18e3e
   i18n (1.15.2) sha256=00f9eb62412fe593b2a65a97daa75300d37abb8f7202ec748e94b6d46a9dd1b5
   json (3.1.0) sha256=3ce7ccf8fde58960177a3a756c31f292a4c1e1dedee884547096a5b0604e3bd8

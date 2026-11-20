@@ -169,6 +169,41 @@ $ bundle exec cuetip -c config/cuetip.rb
 
 You can run as many workers as you wish however the more that you run the more polling queries will be sent to your database.
 
+## Active Job
+
+Cuetip can be used as an Active Job backend. In a Rails application, set the queue adapter:
+
+```ruby
+# config/application.rb
+config.active_job.queue_adapter = :cuetip
+```
+
+Active Job jobs are then stored in the Cuetip tables and run by the `cuetip` worker, alongside any `Cuetip::Job` classes:
+
+```ruby
+class ReportJob < ApplicationJob
+  queue_as :reports
+  retry_on Timeout::Error, wait: 1.minute, attempts: 3
+
+  def perform(report)
+    report.deliver
+  end
+end
+
+ReportJob.perform_later(report)                    # runs on the "reports" queue
+ReportJob.set(wait: 1.hour).perform_later(report)  # scheduled
+```
+
+Things to know:
+
+* Each Active Job is stored as a `Cuetip::ActiveJobWrapper` job, with the Active Job class name in its `job_class` param.
+* Retries are handled by Active Job (`retry_on`), not by Cuetip's `retry_count`. An unhandled error marks the Cuetip job as `Failed`.
+* Active Job jobs never expire (no TTL), so scheduled jobs always run.
+* `queue_as` maps to Cuetip queues, so `cuetip -q reports` works as expected. Job `priority` is ignored.
+* By default, jobs are enqueued in the same database transaction as your records, so a rolled-back transaction also discards the job. (Unless you enable Active Job's `enqueue_after_transaction_commit`.)
+
+Outside Rails, `require 'active_job/queue_adapters/cuetip_adapter'` before setting the adapter.
+
 ## Testing
 
 In order to unit test a `Cuetip::Job`'s instance methods (such as `#perform`), it first needs to be instanciated passing in an instance of `Cuetip::Models::Job`. This is best done with a tesing double:
