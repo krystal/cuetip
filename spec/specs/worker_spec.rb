@@ -27,7 +27,9 @@ describe Cuetip::Worker do
     subject(:queued_job)    { Cuetip::Models::QueuedJob.create!(job: job) }
 
     it 'should execute a job in it\'s own queue' do
-      Cuetip::Models::QueuedJob.stub_chain(:from_queues, :find_and_lock).with(queues).with(no_args).and_return(queued_job)
+      scope = double('scope')
+      allow(Cuetip::Models::QueuedJob).to receive(:from_queues).with(queues).and_return(scope)
+      allow(scope).to receive(:find_and_lock).with(no_args).and_return(queued_job)
       allow(job).to receive(:execute)
       worker.run_once
       expect(job).to have_received(:execute)

@@ -6,8 +6,6 @@ require 'active_record'
 ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
 
 # Load up the migrations
-ActiveRecord::MigrationContext.new(
-  File.expand_path('../db/migrate', __dir__),
-  ActiveRecord::Base.connection.schema_migration).migrate
+ActiveRecord::MigrationContext.new(File.expand_path('../db/migrate', __dir__)).migrate
 
 require 'cuetip'
